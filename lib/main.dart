@@ -14,7 +14,6 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // ✅ يزيل الهاش # من الرابط
   usePathUrlStrategy();
 
   runApp(const App());
@@ -39,7 +38,7 @@ class App extends StatelessWidget {
         ],
         child: MaterialApp.router(
           title: title,
-          routerConfig: router, // ✅ هنا الراوتر
+          routerConfig: router, 
           theme: theme,
           darkTheme: darkTheme,
         ),

@@ -21,7 +21,7 @@ class NavigationAppBar extends StatelessWidget implements PreferredSizeWidget {
               PopupMenuItem(
                 child: const Text('Sign out'),
                 onTap: () {
-                  // Sign out logic
+                  // Sign out logic , not completed yet
                 },
               ),
             ],

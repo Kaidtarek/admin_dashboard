@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_admin_dashboard_template/features/dashboard/dummy_inventories.dart';
-import 'package:flutter_admin_dashboard_template/features/dashboard/inventory.dart';
 import 'package:gap/gap.dart';
 import 'package:intersperse/intersperse.dart';
 import 'package:responsive_framework/responsive_framework.dart';
@@ -17,7 +15,6 @@ class DashBoardPage extends StatefulWidget {
 }
 
 class _DashBoardPageState extends State<DashBoardPage> {
-  List<Inventory> inventories = List.from(dummyInventories);
   final Set<String> selectedIds = {};
 
   void _acceptSelected() async {
@@ -48,7 +45,6 @@ class _DashBoardPageState extends State<DashBoardPage> {
     int acceptedCount = 0;
     int totalProducts = 0;
 
-    // 🔹 Products collection
     final productsSnap =
         await FirebaseFirestore.instance.collection('products').get();
 
@@ -57,7 +53,9 @@ class _DashBoardPageState extends State<DashBoardPage> {
     for (var doc in productsSnap.docs) {
       final data = doc.data();
       final priceRaw = data['price'] ?? 0;
-      final price = priceRaw is num ? priceRaw.toDouble() : double.tryParse(priceRaw.toString()) ?? 0.0;
+      final price = priceRaw is num
+          ? priceRaw.toDouble()
+          : double.tryParse(priceRaw.toString()) ?? 0.0;
       final accepted = data['accepted'] ?? false;
 
       if (accepted == true) {
@@ -66,7 +64,6 @@ class _DashBoardPageState extends State<DashBoardPage> {
       }
     }
 
-    // 🔹 Users collection
     final usersSnap =
         await FirebaseFirestore.instance.collection('users').get();
     final totalUsers = usersSnap.docs.length;
@@ -95,7 +92,6 @@ class _DashBoardPageState extends State<DashBoardPage> {
           ),
           const Gap(16),
 
-          // 🔹 Summary Cards fetched dynamically
           FutureBuilder<Map<String, dynamic>>(
             future: _getSummaryData(),
             builder: (context, snapshot) {
@@ -164,7 +160,6 @@ class _DashBoardPageState extends State<DashBoardPage> {
   }
 }
 
-
 class _TableView extends StatelessWidget {
   final Set<String> selectedIds;
   final ValueChanged<String> onToggleSelection;
@@ -181,116 +176,116 @@ class _TableView extends StatelessWidget {
   }
 
   @override
-Widget build(BuildContext context) {
-  final theme = Theme.of(context);
-  final colorScheme = theme.colorScheme;
-  final decoration = TableSpanDecoration(
-    border: TableSpanBorder(
-      trailing: BorderSide(color: theme.dividerColor),
-    ),
-  );
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final decoration = TableSpanDecoration(
+      border: TableSpanBorder(
+        trailing: BorderSide(color: theme.dividerColor),
+      ),
+    );
 
-  return StreamBuilder<QuerySnapshot>(
-    stream: FirebaseFirestore.instance
-        .collection('products')
-        .where('accepted', isEqualTo: false)  
-        .snapshots(),
-    builder: (context, snapshot) {
-      if (snapshot.hasError) {
-        return const Center(child: Text("Error loading products"));
-      }
-      if (!snapshot.hasData) {
-        return const Center(child: CircularProgressIndicator());
-      }
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('products')
+          .where('accepted', isEqualTo: false)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const Center(child: Text("Error loading products"));
+        }
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-      final docs = snapshot.data!.docs;
+        final docs = snapshot.data!.docs;
 
-      if (docs.isEmpty) {
-        return const Center(child: Text("No unaccepted products found"));
-      }
+        if (docs.isEmpty) {
+          return const Center(child: Text("No unaccepted products found"));
+        }
 
-      return Card(
-        clipBehavior: Clip.antiAlias,
-        child: TableView.builder(
-          columnCount: 9 + 1,
-          rowCount: docs.length + 1,
-          pinnedRowCount: 1,
-          pinnedColumnCount: 1,
-          columnBuilder: (index) {
-            return TableSpan(
-              extent: const FractionalTableSpanExtent(1 / 8),
-            );
-          },
-          rowBuilder: (index) {
-            return TableSpan(
-              extent: const FixedTableSpanExtent(50),
-            );
-          },
-          cellBuilder: (context, vicinity) {
-            final isHeader = vicinity.yIndex == 0;
-            final isCheckboxCol = vicinity.xIndex == 0;
+        return Card(
+          clipBehavior: Clip.antiAlias,
+          child: TableView.builder(
+            columnCount: 9 + 1,
+            rowCount: docs.length + 1,
+            pinnedRowCount: 1,
+            pinnedColumnCount: 1,
+            columnBuilder: (index) {
+              return TableSpan(
+                extent: const FractionalTableSpanExtent(1 / 8),
+              );
+            },
+            rowBuilder: (index) {
+              return TableSpan(
+                extent: const FixedTableSpanExtent(50),
+              );
+            },
+            cellBuilder: (context, vicinity) {
+              final isHeader = vicinity.yIndex == 0;
+              final isCheckboxCol = vicinity.xIndex == 0;
 
-            if (isHeader) {
-              final headers = [
-                "✔",
-                'Name',
-                'Category',
-                'Price',
-                'Quantity',
-                'Unit',
-                'Description',
-                'Owner ID',
-                'Accepted',
-                'Created At',
-              ];
-              return TableViewCell(
-                child: Center(
-                  child: Text(
-                    headers[vicinity.xIndex],
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+              if (isHeader) {
+                final headers = [
+                  "✔",
+                  'Name',
+                  'Category',
+                  'Price',
+                  'Quantity',
+                  'Unit',
+                  'Description',
+                  'Owner ID',
+                  'Accepted',
+                  'Created At',
+                ];
+                return TableViewCell(
+                  child: Center(
+                    child: Text(
+                      headers[vicinity.xIndex],
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
-              );
-            }
+                );
+              }
 
-            final doc = docs[vicinity.yIndex - 1];
-            final data = doc.data() as Map<String, dynamic>;
+              final doc = docs[vicinity.yIndex - 1];
+              final data = doc.data() as Map<String, dynamic>;
 
-            if (isCheckboxCol) {
-              return TableViewCell(
-                child: Checkbox(
-                  value: selectedIds.contains(doc.id),
-                  onChanged: (_) => onToggleSelection(doc.id),
-                ),
-              );
-            } else {
-              final fields = [
-                data['name']?.toString() ?? '',
-                data['category']?.toString() ?? '',
-                data['price']?.toString() ?? '',
-                data['quantity']?.toString() ?? '',
-                data['unit']?.toString() ?? '',
-                data['description']?.toString() ?? '',
-                data['ownerId']?.toString() ?? '',
-                _isAcceptedFalse(data['accepted']) ? "No" : "Yes",
-                (data['createdAt'] != null)
-                    ? (data['createdAt'] as Timestamp).toDate().toString()
-                    : '',
-              ];
-
-              return TableViewCell(
-                child: Center(
-                  child: Text(
-                    fields[vicinity.xIndex - 1],
-                    overflow: TextOverflow.ellipsis,
+              if (isCheckboxCol) {
+                return TableViewCell(
+                  child: Checkbox(
+                    value: selectedIds.contains(doc.id),
+                    onChanged: (_) => onToggleSelection(doc.id),
                   ),
-                ),
-              );
-            }
-          },
-        ),
-      );
-    },
-  );
-}
+                );
+              } else {
+                final fields = [
+                  data['name']?.toString() ?? '',
+                  data['category']?.toString() ?? '',
+                  data['price']?.toString() ?? '',
+                  data['quantity']?.toString() ?? '',
+                  data['unit']?.toString() ?? '',
+                  data['description']?.toString() ?? '',
+                  data['ownerId']?.toString() ?? '',
+                  _isAcceptedFalse(data['accepted']) ? "No" : "Yes",
+                  (data['createdAt'] != null)
+                      ? (data['createdAt'] as Timestamp).toDate().toString()
+                      : '',
+                ];
+
+                return TableViewCell(
+                  child: Center(
+                    child: Text(
+                      fields[vicinity.xIndex - 1],
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                );
+              }
+            },
+          ),
+        );
+      },
+    );
+  }
 }

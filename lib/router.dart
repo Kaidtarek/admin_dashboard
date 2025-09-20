@@ -3,11 +3,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_admin_dashboard_template/features/Auth/auth.dart';
 import 'package:flutter_admin_dashboard_template/features/Auth/auth_state.dart'; // ✅
+import 'package:flutter_admin_dashboard_template/features/users/dummy_users.dart';
 import 'package:flutter_admin_dashboard_template/features/users/user_not_found_page.dart';
 import 'package:go_router/go_router.dart';
 
 import 'features/dashboard/dashbord_page.dart';
-import 'features/users/dummy_users.dart';
 import 'features/users/user_page.dart';
 import 'features/users/users_page.dart';
 import 'widgets/widgets.dart';
@@ -16,7 +16,6 @@ part 'router.g.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
-/// ✅ GoRouter مع redirect يضمن أن العنوان يبقى "/"
 final router = GoRouter(
   debugLogDiagnostics: kDebugMode,
   navigatorKey: _rootNavigatorKey,
@@ -25,19 +24,17 @@ final router = GoRouter(
   redirect: (context, state) {
   final goingTo = state.uri.toString();
 
-  // لو مش مسجل دخول
   if (!AuthState.isLoggedIn) {
     if (goingTo != '/login' && goingTo != '/') {
       return '/login';
     }
   } else {
-    // لو مسجل دخول ومازال في صفحة login → ودّيه للداشبورد
     if (goingTo == '/' || goingTo == '/login') {
       return '/dashboard';
     }
   }
 
-  return null; // لا تعمل أي redirect إضافي
+  return null; 
 },
 
 );

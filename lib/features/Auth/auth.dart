@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'auth_state.dart'; // ✅ استدعاء الحالة
+import 'auth_state.dart'; 
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -27,8 +27,8 @@ class _LoginPageState extends State<LoginPage> {
     final secondKey = _secondKeyController.text.trim();
 
     if (firstKey == '2222' && secondKey == 'xxxx') {
-  AuthState.isLoggedIn = true; // ✅ تسجيل الدخول
-  if (mounted) context.go('/dashboard'); // 🚀 بعد تسجيل الدخول نروح مباشرة للداشبورد
+  AuthState.isLoggedIn = true; 
+  if (mounted) context.go('/dashboard'); 
 } else {
   ScaffoldMessenger.of(context).showSnackBar(
     const SnackBar(content: Text('Invalid credentials')),
