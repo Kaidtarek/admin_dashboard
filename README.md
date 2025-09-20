@@ -2,7 +2,7 @@
 
 This is an admin dashboard template for Flutter.
 
-#Edited by Tarek to be friendly with a dashboard for market app
+# Edited by `Tarek` to be friendly with a dashboard for market app
 Below, the origin and official README
 
 **[View Demo](https://flutter-admin-dashboard-d5aeb.web.app/)**
